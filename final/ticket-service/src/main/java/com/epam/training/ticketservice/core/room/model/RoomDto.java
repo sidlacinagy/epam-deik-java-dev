@@ -14,8 +14,6 @@ public class RoomDto {
     }
 
 
-
-
     public static class Builder {
         private String name;
         private int rows;

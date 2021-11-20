@@ -12,8 +12,12 @@ import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellMethodAvailability;
 
+import java.text.Collator;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @ShellComponent
 public class ScreeningCommand {
@@ -32,7 +36,7 @@ public class ScreeningCommand {
     @ShellMethodAvailability("isAvailable")
     @ShellMethod(key = "create screening", value = "Create new screening")
     public String createScreening(String movieName, String roomName, String date) {
-        ScreeningDto screeningDto=ScreeningDto.builder()
+        ScreeningDto screeningDto = ScreeningDto.builder()
                 .withMovieName(movieName)
                 .withRoomName(roomName)
                 .withDate(date)
@@ -43,7 +47,7 @@ public class ScreeningCommand {
     @ShellMethodAvailability("isAvailable")
     @ShellMethod(key = "delete screening", value = "Delete screening")
     public String deleteScreening(String movieName, String roomName, String date) {
-        ScreeningDto screeningDto=ScreeningDto.builder()
+        ScreeningDto screeningDto = ScreeningDto.builder()
                 .withMovieName(movieName)
                 .withRoomName(roomName)
                 .withDate(date)
@@ -52,30 +56,35 @@ public class ScreeningCommand {
         return "Successfully deleted screening";
     }
 
-    @ShellMethodAvailability("isUserAvailable")
+
     @ShellMethod(key = "list screenings", value = "List screening")
     public String listScreening() {
         List<ScreeningDto> screeningList = screeningService.getScreeningList();
-        if(screeningList.size()==0){
+        if (screeningList.size() == 0) {
             return "There are no screenings";
         }
-        String str="";
+        StringBuilder str = new StringBuilder();
 
-        for(int i=0;i<screeningList.size();i++){
-            ScreeningDto currentScreening=screeningList.get(i);
+        Collator coll = Collator.getInstance(new Locale("hu", "HU"));
+
+        screeningList = screeningList.stream()
+                .sorted(Comparator.comparing(ScreeningDto::getMovieName, coll))
+                .collect(Collectors.toList());
+
+        for (int i = 0; i < screeningList.size(); i++) {
+            ScreeningDto currentScreening = screeningList.get(i);
             Optional<Movie> movieByName = movieService.getMovieByName(currentScreening.getMovieName());
-            if(movieByName.isEmpty()){
+            if (movieByName.isEmpty()) {
                 return "Database is asynchronous";
             }
-            String genre=movieByName.get().getGenre();
-            int length=movieByName.get().getLength();
-            str=str+currentScreening.getMovieName()+" ("+genre+", "+length+" minutes), screened in room "+
-                    currentScreening.getRoomName()+", at "+currentScreening.getDate()+"\n";
+            String genre = movieByName.get().getGenre();
+            int length = movieByName.get().getLength();
+            str.append(currentScreening.getMovieName()).append(" (").append(genre).append(", ").append(length)
+                    .append(" minutes), screened in room ").append(currentScreening.getRoomName()).append(", at ")
+                    .append(currentScreening.getDate()).append("\n");
         }
-        return str.substring(0,(str.length()-1));
+        return str.substring(0, (str.length() - 1));
     }
-
-
 
 
     private Availability isAvailable() {
@@ -86,11 +95,5 @@ public class ScreeningCommand {
         return Availability.unavailable("You are not an admin!");
     }
 
-    private Availability isUserAvailable(){
-        Optional<UserDto> user = userService.getLoggedInUser();
-        if (user.isPresent()) {
-            return Availability.available();
-        }
-        return Availability.unavailable("You are not logged in!");
-    }
+
 }

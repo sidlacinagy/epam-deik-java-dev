@@ -4,7 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Id;
 import java.util.Objects;
 
 
@@ -25,7 +29,7 @@ public class User {
         this.password = password;
         this.role = role;
     }
-    
+
 
     public String getUsername() {
         return username;
@@ -53,24 +57,27 @@ public class User {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         User user = (User) o;
-        return  Objects.equals(username, user.username) && Objects.equals(password, user.password) && role == user.role;
+        return Objects.equals(username, user.username) && Objects.equals(password, user.password) && role == user.role;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash( username, password, role);
+        return Objects.hash(username, password, role);
     }
 
     @Override
     public String toString() {
-        return "User{" +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", role=" + role +
-                '}';
+        return "User{"
+                + ", username='" + username + '\''
+                + ", password='" + password + '\''
+                + ", role=" + role + '}';
     }
 
     public enum Role {

@@ -51,26 +51,26 @@ public class RoomCommand {
     @ShellMethod(key = "delete room", value = "Delete room")
     public String deleteMovie(String name) {
         roomService.deleteRoom(name);
-        return "Deleted room: "+name;
+        return "Deleted room: " + name;
     }
 
-    @ShellMethodAvailability("isUserAvailable")
+
     @ShellMethod(key = "list rooms", value = "List rooms")
     public String listMovies() {
         List<RoomDto> roomList = roomService.getRoomList();
-        if(roomList.size()==0){
+        if (roomList.size() == 0) {
             return "There are no rooms at the moment";
         }
-        String str="";
+        StringBuilder str = new StringBuilder();
 
-        for(int i=0;i<roomList.size();i++){
-            str=str+"Room "+roomList.get(i).getName()+" with "+roomList.get(i).getRows()*roomList.get(i).getColumns()+" seats, "+
-                    roomList.get(i).getRows()+" rows and "+roomList.get(i).getColumns()+" columns \n";
+        for (int i = 0; i < roomList.size(); i++) {
+            str.append("Room ").append(roomList.get(i).getName())
+                    .append(" with ").append(roomList.get(i).getRows() * roomList.get(i).getColumns())
+                    .append(" seats, ").append(roomList.get(i).getRows()).append(" rows and ")
+                    .append(roomList.get(i).getColumns()).append(" columns\n");
         }
-        return str.substring(0,(str.length()-1));
+        return str.substring(0, (str.length() - 1));
     }
-
-
 
 
     private Availability isAvailable() {
@@ -81,11 +81,5 @@ public class RoomCommand {
         return Availability.unavailable("You are not an admin!");
     }
 
-    private Availability isUserAvailable(){
-        Optional<UserDto> user = userService.getLoggedInUser();
-        if (user.isPresent()) {
-            return Availability.available();
-        }
-        return Availability.unavailable("You are not logged in!");
-    }
+
 }

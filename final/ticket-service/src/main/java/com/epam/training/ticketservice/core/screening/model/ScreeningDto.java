@@ -15,30 +15,28 @@ public class ScreeningDto {
     }
 
 
-
-
     public static class Builder {
         private String movieName;
         private String roomName;
         private String date;
 
         public Builder withMovieName(String movieName) {
-            this.movieName=movieName;
+            this.movieName = movieName;
             return this;
         }
 
         public Builder withRoomName(String roomName) {
-            this.roomName=roomName;
+            this.roomName = roomName;
             return this;
         }
 
         public Builder withDate(String date) {
-            this.date=date;
+            this.date = date;
             return this;
         }
 
         public ScreeningDto build() {
-            return new ScreeningDto(movieName,roomName,date);
+            return new ScreeningDto(movieName, roomName, date);
         }
     }
 }

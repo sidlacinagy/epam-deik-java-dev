@@ -21,7 +21,9 @@ public class InMemoryDatabaseInitializer {
     private final RoomRepository roomRepository;
     private final ScreeningRepository screeningRepository;
 
-    public InMemoryDatabaseInitializer(MovieRepository productRepository, UserRepository userRepository, RoomRepository roomRepository, ScreeningRepository screeningRepository) {
+    public InMemoryDatabaseInitializer(MovieRepository productRepository,
+                                       UserRepository userRepository, RoomRepository roomRepository,
+                                       ScreeningRepository screeningRepository) {
         this.movieRepository = productRepository;
         this.userRepository = userRepository;
         this.roomRepository = roomRepository;
@@ -30,21 +32,9 @@ public class InMemoryDatabaseInitializer {
 
     @PostConstruct
     public void init() {
-        Movie hete = new Movie("hete","hhheee",5);
-        Movie koli = new Movie("koli","geko",15);
-        movieRepository.saveAll(List.of(hete,koli));
 
         User admin = new User("admin", "admin", User.Role.ADMIN);
         userRepository.save(admin);
-
-        Room as=new Room("as",5,6);
-        Room hu=new Room("hu",15,8);
-        roomRepository.saveAll(List.of(as,hu));
-
-        Screening op=new Screening("hete","as","2021-03-14 16:00");
-        Screening op1=new Screening("koli","hu","2021-05-14 16:00");
-
-        screeningRepository.saveAll(List.of(op,op1));
 
     }
 

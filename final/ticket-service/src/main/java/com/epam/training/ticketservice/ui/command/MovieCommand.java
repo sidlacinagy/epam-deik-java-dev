@@ -25,7 +25,6 @@ public class MovieCommand {
     }
 
 
-
     @ShellMethodAvailability("isAvailable")
     @ShellMethod(key = "create movie", value = "Create new movie")
     public MovieDto createMovie(String name, String genre, int length) {
@@ -53,25 +52,25 @@ public class MovieCommand {
     @ShellMethod(key = "delete movie", value = "Delete movie")
     public String deleteMovie(String name) {
         movieService.deleteMovie(name);
-        return "Deleted "+name;
+        return "Deleted " + name;
     }
 
-    @ShellMethodAvailability("isUserAvailable")
+
     @ShellMethod(key = "list movies", value = "List movies")
     public String listMovies() {
         List<MovieDto> movieList = movieService.getMovieList();
-        if(movieList.size()==0){
+        if (movieList.size() == 0) {
             return "There are no movies at the moment";
         }
-        String str="";
+        StringBuilder str = new StringBuilder();
 
-        for(int i=0;i<movieList.size();i++){
-            str=str+movieList.get(i).getName()+" ("+movieList.get(i).getGenre()+", "+movieList.get(i).getLength()+" minutes)"+"\n";
+        for (int i = 0; i < movieList.size(); i++) {
+            str.append(movieList.get(i).getName()).append(" (")
+                    .append(movieList.get(i).getGenre()).append(", ")
+                    .append(movieList.get(i).getLength()).append(" minutes)").append("\n");
         }
-        return str.substring(0,(str.length()-1));
+        return str.substring(0, (str.length() - 1));
     }
-
-
 
 
     private Availability isAvailable() {
@@ -80,14 +79,6 @@ public class MovieCommand {
             return Availability.available();
         }
         return Availability.unavailable("You are not an admin!");
-    }
-
-    private Availability isUserAvailable(){
-        Optional<UserDto> user = userService.getLoggedInUser();
-        if (user.isPresent()) {
-            return Availability.available();
-        }
-        return Availability.unavailable("You are not logged in!");
     }
 
 

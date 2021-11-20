@@ -11,7 +11,6 @@ import javax.persistence.Entity;
 import java.io.Serializable;
 
 
-
 @Entity
 @Data
 @NoArgsConstructor
@@ -21,7 +20,7 @@ public class Screening {
     private Key key;
 
     public Screening(String movieName, String roomName, String date) {
-        this.key = new Key(movieName,roomName,date);
+        this.key = new Key(movieName, roomName, date);
     }
 
 

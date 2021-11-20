@@ -15,8 +15,6 @@ public class MovieDto {
     }
 
 
-    
-
     public static class Builder {
         private String name;
         private String genre;

@@ -1,5 +1,8 @@
 package com.epam.training.ticketservice.ui.command;
 
+import com.epam.training.ticketservice.core.booking.BookingService;
+import com.epam.training.ticketservice.core.booking.model.BookingDto;
+import com.epam.training.ticketservice.core.booking.persistence.entity.Booking;
 import com.epam.training.ticketservice.core.user.UserService;
 import com.epam.training.ticketservice.core.user.model.UserDto;
 import com.epam.training.ticketservice.core.user.persistence.entity.User;
@@ -14,9 +17,11 @@ import java.util.Optional;
 public class UserCommand {
 
     private final UserService userService;
+    private final BookingService bookingService;
 
-    public UserCommand(UserService userService) {
+    public UserCommand(UserService userService, BookingService bookingService) {
         this.userService = userService;
+        this.bookingService = bookingService;
     }
 
     @ShellMethod(key = "sign in", value = "User login")
@@ -25,7 +30,7 @@ public class UserCommand {
         if (user.isEmpty()) {
             return "Login failed due to incorrect credentials";
         }
-        if(user.get().getRole()==User.Role.USER) {
+        if (user.get().getRole() == User.Role.USER) {
             return username + " is logged in!";
         }
         user = userService.logout();
@@ -39,7 +44,7 @@ public class UserCommand {
         if (user.isEmpty()) {
             return "Login failed due to incorrect credentials";
         }
-        if(user.get().getRole()==User.Role.ADMIN) {
+        if (user.get().getRole() == User.Role.ADMIN) {
             return username + " is logged in!";
         }
         user = userService.logout();
@@ -50,7 +55,7 @@ public class UserCommand {
     public String logout() {
         Optional<UserDto> user = userService.logout();
         if (user.isEmpty()) {
-            return "You need to login first!";
+            return "You are not signed in";
         }
         return user.get() + " is logged out!";
     }
@@ -60,13 +65,14 @@ public class UserCommand {
     public String printLoggedInUser() {
         Optional<UserDto> userDto = userService.getLoggedInUser();
         if (userDto.isEmpty()) {
-            return "You need to login first!";
+            return "You are not signed in";
         }
-        if (userDto.get().getRole() == User.Role.ADMIN){
-            return "Signed in with privileged account: "+userDto.get().getUsername();
-        }
-        else if (userDto.get().getRole() == User.Role.USER){
-            return "Signed in with account: "+userDto.get().getUsername();
+        if (userDto.get().getRole() == User.Role.ADMIN) {
+            return "Signed in with privileged account '" + userDto.get().getUsername() + "'";
+        } else if (userDto.get().getRole() == User.Role.USER) {
+            return "Signed in with account '"
+                    + userDto.get().getUsername() + "'\n"
+                    + bookingService.listBookingsForUser(userDto.get().getUsername());
         }
         return userDto.get().toString();
     }
@@ -79,6 +85,28 @@ public class UserCommand {
         } catch (Exception e) {
             return "Registration failed!";
         }
+    }
+
+    @ShellMethod(key = "book", value = "Book for a screening")
+    @ShellMethodAvailability("isAvailableForUser")
+    public String bookForScreening(String movieName, String roomName, String date, String seats) {
+
+        Optional<UserDto> user = userService.getLoggedInUser();
+        BookingDto bookingDto = BookingDto.builder().date(date).roomName(roomName)
+                .user(user.get().getUsername())
+                .movieName(movieName).seats(seats).build();
+
+        return bookingService.createBooking(bookingDto);
+
+    }
+
+
+    private Availability isAvailableForUser() {
+        Optional<UserDto> user = userService.getLoggedInUser();
+        if (user.isPresent() && user.get().getRole() == User.Role.USER) {
+            return Availability.available();
+        }
+        return Availability.unavailable("You are not logged in as a User!");
     }
 
 

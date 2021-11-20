@@ -9,15 +9,18 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 
 @Entity
-@AllArgsConstructor
 @Data
+@AllArgsConstructor
 @NoArgsConstructor
 public class Room {
 
     @Id
     private String name;
-    private int rows;
-    private int columns;
+    private int numRow;
+    private int numCol;
+
+
+
 
 
 }

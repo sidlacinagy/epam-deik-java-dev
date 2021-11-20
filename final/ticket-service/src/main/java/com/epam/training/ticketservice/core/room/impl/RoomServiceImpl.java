@@ -22,8 +22,8 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public Optional<Room> getRoomByName(String name){
-       return roomRepository.findById(name);
+    public Optional<Room> getRoomByName(String name) {
+        return roomRepository.findById(name);
     }
 
     @Override
@@ -32,7 +32,7 @@ public class RoomServiceImpl implements RoomService {
         Objects.requireNonNull(roomDto.getRows(), "Row cannot be null");
         Objects.requireNonNull(roomDto.getColumns(), "Col cannot be null");
         Objects.requireNonNull(roomDto.getName(), "Name cannot be null");
-        Room room=new Room(roomDto.getName(),roomDto.getRows(),roomDto.getColumns());
+        Room room = new Room(roomDto.getName(), roomDto.getRows(), roomDto.getColumns());
         roomRepository.save(room);
     }
 
@@ -42,12 +42,12 @@ public class RoomServiceImpl implements RoomService {
         Objects.requireNonNull(roomDto.getRows(), "Row cannot be null");
         Objects.requireNonNull(roomDto.getColumns(), "Col cannot be null");
         Objects.requireNonNull(roomDto.getName(), "Name cannot be null");
-        Optional<Room> room=roomRepository.findById(roomDto.getName());
+        Optional<Room> room = roomRepository.findById(roomDto.getName());
 
         if (room.isPresent()) {
-            Room room1=room.get();
-            room1.setColumns(roomDto.getColumns());
-            room1.setRows(roomDto.getRows());
+            Room room1 = room.get();
+            room1.setNumCol(roomDto.getColumns());
+            room1.setNumRow(roomDto.getRows());
             roomRepository.save(room1);
             return "Successfully updated";
         }
@@ -67,8 +67,8 @@ public class RoomServiceImpl implements RoomService {
     private RoomDto convertEntityToDto(Room room) {
         return RoomDto.builder()
                 .withName(room.getName())
-                .withRow(room.getRows())
-                .withColumn(room.getColumns())
+                .withRow(room.getNumRow())
+                .withColumn(room.getNumCol())
                 .build();
     }
 

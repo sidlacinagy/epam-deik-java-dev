@@ -25,6 +25,7 @@ public class UserServiceImpl implements UserService {
         this.loggedInUser = loggedInUser;
         this.userRepository = userRepository;
     }
+
     @Override
     public Optional<UserDto> login(String username, String password) {
         Objects.requireNonNull(username, "Username cannot be null during login!");

@@ -23,7 +23,7 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public Optional<Movie> getMovieByName(String name){
+    public Optional<Movie> getMovieByName(String name) {
         return movieRepository.findById(name);
     }
 
@@ -33,7 +33,7 @@ public class MovieServiceImpl implements MovieService {
         Objects.requireNonNull(movieDto.getGenre(), "Genre cannot be null");
         Objects.requireNonNull(movieDto.getName(), "Name cannot be null");
         Objects.requireNonNull(movieDto.getLength(), "Length cannot be null");
-        Movie movie=new Movie(movieDto.getName(),movieDto.getGenre(),movieDto.getLength());
+        Movie movie = new Movie(movieDto.getName(), movieDto.getGenre(), movieDto.getLength());
         movieRepository.save(movie);
     }
 
@@ -43,10 +43,10 @@ public class MovieServiceImpl implements MovieService {
         Objects.requireNonNull(movieDto.getGenre(), "Genre cannot be null");
         Objects.requireNonNull(movieDto.getName(), "Name cannot be null");
         Objects.requireNonNull(movieDto.getLength(), "Length cannot be null");
-        Optional<Movie> movie=movieRepository.findById(movieDto.getName());
+        Optional<Movie> movie = movieRepository.findById(movieDto.getName());
 
         if (movie.isPresent()) {
-            Movie movie1=movie.get();
+            Movie movie1 = movie.get();
             movie1.setGenre(movieDto.getGenre());
             movie1.setLength(movieDto.getLength());
             movieRepository.save(movie1);

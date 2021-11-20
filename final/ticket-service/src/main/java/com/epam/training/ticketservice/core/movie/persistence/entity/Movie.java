@@ -9,9 +9,9 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 
 @Entity
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
 public class Movie {
 
     @Id
