@@ -34,7 +34,6 @@ public class ScreeningServiceImpl implements ScreeningService {
     }
 
 
-
     @Override
     public String createScreening(ScreeningDto screeningDto) {
 
@@ -45,64 +44,32 @@ public class ScreeningServiceImpl implements ScreeningService {
 
         Optional<Room> room = roomService.getRoomByName(screeningDto.getRoomName());
 
-        if(room.isEmpty()){
+        if (room.isEmpty()) {
             return "Room does not exist";
         }
         Optional<Movie> movie = movieService.getMovieByName(screeningDto.getMovieName());
-        if(movie.isEmpty()) {
+        if (movie.isEmpty()) {
             return "Movie does not exist";
         }
 
         List<Screening> byRoom = screeningRepository.findByRoom(room.get().getName());
 
-        int length=movieService.getMovieByName(movie.get().getName()).get().getLength();
+        int length = movieService.getMovieByName(movie.get().getName()).get().getLength();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         LocalDateTime startDate = LocalDateTime.parse(screeningDto.getDate(), formatter);
-        LocalDateTime endDate=startDate.plusMinutes(length);
+        LocalDateTime endDate = startDate.plusMinutes(length);
 
-
-        for(int i=0;i<byRoom.size();i++){
-            Screening currentScreening=byRoom.get(i);
-            String currentDateAsString=currentScreening.getKey().getDate();
-            LocalDateTime currentDate = LocalDateTime.parse(currentDateAsString, formatter);
-            String currentMovie=currentScreening.getKey().getMovieName();
-            Optional<Movie> currentMovie1 = movieService.getMovieByName(currentMovie);
-
-            if(movie.isEmpty()){
-                return "Database is asynchronous";
-            }
-            int currentLength=currentMovie1.get().getLength();
-            LocalDateTime currentFinishDate=currentDate.plusMinutes(currentLength);
-
-
-            if((startDate.isBefore(currentFinishDate.plusMinutes(1)) && startDate.isAfter(currentDate.minusMinutes(1))) ||
-                    (endDate.isBefore(currentFinishDate.plusMinutes(1)) && endDate.isAfter(currentDate.minusMinutes(1)))) {
-                return "There is an overlapping screening";
-            }
-
-
+        if(isOverLappingWithTimeInterval(byRoom,startDate,endDate,0)){
+            return "There is an overlapping screening";
         }
 
-        for(int i=0;i<byRoom.size();i++){
-            Screening currentScreening=byRoom.get(i);
-            String currentDateAsString=currentScreening.getKey().getDate();
-            LocalDateTime currentDate = LocalDateTime.parse(currentDateAsString, formatter);
-            String currentMovie=currentScreening.getKey().getMovieName();
-            Optional<Movie> currentMovie1 = movieService.getMovieByName(currentMovie);
-
-            if(movie.isEmpty()){
-                return "Database is asynchronous";
-            }
-            int currentLength=currentMovie1.get().getLength();
-            LocalDateTime currentFinishDateWithBreak=currentDate.plusMinutes(currentLength+10);
-
-            if((startDate.isBefore(currentFinishDateWithBreak.plusMinutes(1)) && startDate.isAfter(currentDate.minusMinutes(1))))
-            {
-                return "This would start in the break period after another screening in this room";
-            }
-
+        if(isOverLappingWithTimeInterval(byRoom,startDate,endDate,10)){
+            return "This would start in the break period after another screening in this room";
         }
-        Screening screening = new Screening(screeningDto.getMovieName(),screeningDto.getRoomName(),screeningDto.getDate());
+
+
+
+        Screening screening = new Screening(screeningDto.getMovieName(), screeningDto.getRoomName(), screeningDto.getDate());
         screeningRepository.save(screening);
         return "Successfully created screening";
     }
@@ -110,7 +77,7 @@ public class ScreeningServiceImpl implements ScreeningService {
 
     @Override
     public void deleteScreening(ScreeningDto screeningDto) {
-        screeningRepository.deleteById(new Screening.Key(screeningDto.getMovieName(),screeningDto.getRoomName(),screeningDto.getDate()));
+        screeningRepository.deleteById(new Screening.Key(screeningDto.getMovieName(), screeningDto.getRoomName(), screeningDto.getDate()));
     }
 
     @Override
@@ -128,5 +95,24 @@ public class ScreeningServiceImpl implements ScreeningService {
 
     private Optional<ScreeningDto> convertEntityToDto(Optional<Screening> screening) {
         return screening.isEmpty() ? Optional.empty() : Optional.of(convertEntityToDto(screening.get()));
+    }
+
+    private boolean isOverLappingWithTimeInterval(List<Screening> byRoom, LocalDateTime startDate, LocalDateTime endDate, int interval) {
+        for (int i = 0; i < byRoom.size(); i++) {
+            Screening currentScreening = byRoom.get(i);
+            String currentDateAsString = currentScreening.getKey().getDate();
+            LocalDateTime currentDate = LocalDateTime.parse(currentDateAsString, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+            String currentMovie = currentScreening.getKey().getMovieName();
+            int currentLength = movieService.getMovieByName(currentMovie).get().getLength();
+            LocalDateTime currentFinishDate = currentDate.plusMinutes(currentLength+1+interval);
+            currentDate=currentDate.minusMinutes(1+interval);
+
+
+            if ((startDate.isBefore(currentFinishDate) && startDate.isAfter(currentDate)) ||
+                    (endDate.isBefore(currentFinishDate) && endDate.isAfter(currentDate))) {
+                return true;
+            }
+        }
+        return false;
     }
 }
