@@ -4,6 +4,7 @@ import com.epam.training.ticketservice.core.movie.MovieService;
 import com.epam.training.ticketservice.core.movie.model.MovieDto;
 import com.epam.training.ticketservice.core.movie.persistence.entity.Movie;
 import com.epam.training.ticketservice.core.movie.persistence.repository.MovieRepository;
+import com.epam.training.ticketservice.core.room.persistence.entity.Room;
 import org.springframework.stereotype.Service;
 
 import java.util.Currency;
@@ -21,6 +22,10 @@ public class MovieServiceImpl implements MovieService {
         this.movieRepository = movieRepository;
     }
 
+    @Override
+    public Optional<Movie> getMovieByName(String name){
+        return movieRepository.findById(name);
+    }
 
     @Override
     public void createMovie(MovieDto movieDto) {
@@ -37,6 +42,7 @@ public class MovieServiceImpl implements MovieService {
         Objects.requireNonNull(movieDto, "Movie cannot be null");
         Objects.requireNonNull(movieDto.getGenre(), "Genre cannot be null");
         Objects.requireNonNull(movieDto.getName(), "Name cannot be null");
+        Objects.requireNonNull(movieDto.getLength(), "Length cannot be null");
         Optional<Movie> movie=movieRepository.findById(movieDto.getName());
 
         if (movie.isPresent()) {

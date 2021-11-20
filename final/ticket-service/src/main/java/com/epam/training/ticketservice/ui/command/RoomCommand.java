@@ -1,7 +1,7 @@
 package com.epam.training.ticketservice.ui.command;
 
-import com.epam.training.ticketservice.core.movie.MovieService;
-import com.epam.training.ticketservice.core.movie.model.MovieDto;
+import com.epam.training.ticketservice.core.room.RoomService;
+import com.epam.training.ticketservice.core.room.model.RoomDto;
 import com.epam.training.ticketservice.core.user.UserService;
 import com.epam.training.ticketservice.core.user.model.UserDto;
 import com.epam.training.ticketservice.core.user.persistence.entity.User;
@@ -14,59 +14,58 @@ import java.util.List;
 import java.util.Optional;
 
 @ShellComponent
-public class MovieCommand {
+public class RoomCommand {
 
     private final UserService userService;
-    private final MovieService movieService;
+    private final RoomService roomService;
 
-    public MovieCommand(UserService userService, MovieService movieService) {
+    public RoomCommand(UserService userService, RoomService roomService) {
         this.userService = userService;
-        this.movieService = movieService;
+        this.roomService = roomService;
     }
 
-
-
     @ShellMethodAvailability("isAvailable")
-    @ShellMethod(key = "create movie", value = "Create new movie")
-    public MovieDto createMovie(String name, String genre, int length) {
-        MovieDto movieDto = MovieDto.builder()
+    @ShellMethod(key = "create room", value = "Create new room")
+    public RoomDto createRoom(String name, int row, int column) {
+        RoomDto roomDto = RoomDto.builder()
                 .withName(name)
-                .withGenre(genre)
-                .withLength(length)
+                .withColumn(column)
+                .withRow(row)
                 .build();
-        movieService.createMovie(movieDto);
-        return movieDto;
+        roomService.createRoom(roomDto);
+        return roomDto;
     }
 
     @ShellMethodAvailability("isAvailable")
-    @ShellMethod(key = "update movie", value = "Update movie")
-    public String updateMovie(String name, String genre, int length) {
-        MovieDto movieDto = MovieDto.builder()
+    @ShellMethod(key = "update room", value = "Update movie")
+    public String updateRoom(String name, int row, int column) {
+        RoomDto roomDto = RoomDto.builder()
                 .withName(name)
-                .withGenre(genre)
-                .withLength(length)
+                .withColumn(column)
+                .withRow(row)
                 .build();
-        return movieService.updateMovie(movieDto);
+        return roomService.updateRoom(roomDto);
     }
 
     @ShellMethodAvailability("isAvailable")
-    @ShellMethod(key = "delete movie", value = "Delete movie")
+    @ShellMethod(key = "delete room", value = "Delete room")
     public String deleteMovie(String name) {
-        movieService.deleteMovie(name);
-        return "Deleted "+name;
+        roomService.deleteRoom(name);
+        return "Deleted room: "+name;
     }
 
     @ShellMethodAvailability("isUserAvailable")
-    @ShellMethod(key = "list movies", value = "List movies")
+    @ShellMethod(key = "list rooms", value = "List rooms")
     public String listMovies() {
-        List<MovieDto> movieList = movieService.getMovieList();
-        if(movieList.size()==0){
-            return "There are no movies at the moment";
+        List<RoomDto> roomList = roomService.getRoomList();
+        if(roomList.size()==0){
+            return "There are no rooms at the moment";
         }
         String str="";
 
-        for(int i=0;i<movieList.size();i++){
-            str=str+movieList.get(i).getName()+" ("+movieList.get(i).getGenre()+", "+movieList.get(i).getLength()+" minutes)"+"\n";
+        for(int i=0;i<roomList.size();i++){
+            str=str+"Room "+roomList.get(i).getName()+" with "+roomList.get(i).getRows()*roomList.get(i).getColumns()+" seats, "+
+                    roomList.get(i).getRows()+" rows and "+roomList.get(i).getColumns()+" columns \n";
         }
         return str.substring(0,(str.length()-1));
     }
@@ -89,6 +88,4 @@ public class MovieCommand {
         }
         return Availability.unavailable("You are not logged in!");
     }
-
-
 }
