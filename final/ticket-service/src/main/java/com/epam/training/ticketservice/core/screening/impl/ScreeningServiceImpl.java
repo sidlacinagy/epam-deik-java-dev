@@ -93,6 +93,11 @@ public class ScreeningServiceImpl implements ScreeningService {
         return screeningRepository.findAll();
     }
 
+    @Override
+    public Optional<Screening> findById(Screening.Key key) {
+        return screeningRepository.findById(key);
+    }
+
     private ScreeningDto convertEntityToDto(Screening screening) {
         return ScreeningDto.builder()
                 .withDate(screening.getKey().getDate())

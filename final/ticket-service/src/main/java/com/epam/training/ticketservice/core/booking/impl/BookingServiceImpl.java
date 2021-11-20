@@ -50,13 +50,19 @@ public class BookingServiceImpl implements BookingService {
         Objects.requireNonNull(bookingDto.getRoomName(), "Room name cannot be null");
         Objects.requireNonNull(bookingDto.getUser(), "User cannot be null");
 
-        Optional<Room> roomByName = roomService.getRoomByName(bookingDto.getRoomName());
-        if (roomByName.isEmpty()) {
-            return "Room does not exist";
+
+        Optional<Screening> screeningById = screeningService.findById(new Screening.Key(bookingDto.getMovieName(),
+                bookingDto.getRoomName(), bookingDto.getDate()));
+
+        if(screeningById.isEmpty()){
+            return "Screening does not exist";
         }
 
-        int roomRow = roomByName.get().getNumRow();
-        int roomCol = roomByName.get().getNumCol();
+        Room roomByName = roomService.getRoomByName(bookingDto.getRoomName()).get();
+
+
+        int roomRow = roomByName.getNumRow();
+        int roomCol = roomByName.getNumCol();
 
         String[] seats = bookingDto.getSeats().split(" ");
         List<Booking> approvedBookings = new ArrayList<>();
