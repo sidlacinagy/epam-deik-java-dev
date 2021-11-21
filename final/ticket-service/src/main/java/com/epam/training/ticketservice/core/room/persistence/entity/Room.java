@@ -18,9 +18,11 @@ public class Room {
     private String name;
     private int numRow;
     private int numCol;
+    private String priceComponent = "";
 
-
-
-
-
+    public Room(String name, int numRow, int numCol) {
+        this.name = name;
+        this.numRow = numRow;
+        this.numCol = numCol;
+    }
 }

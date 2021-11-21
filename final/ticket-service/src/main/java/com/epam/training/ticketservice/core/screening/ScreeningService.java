@@ -18,5 +18,7 @@ public interface ScreeningService {
 
     Optional<Screening> findById(Screening.Key key);
 
+    String updatePriceComponent(String priceName, Screening.Key key);
+
 
 }

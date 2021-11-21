@@ -18,5 +18,11 @@ public class Movie {
     private String name;
     private String genre;
     private int length;
+    private String priceComponent = "";
 
+    public Movie(String name, String genre, int length) {
+        this.name = name;
+        this.genre = genre;
+        this.length = length;
+    }
 }

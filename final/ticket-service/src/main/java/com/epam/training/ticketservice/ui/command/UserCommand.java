@@ -2,7 +2,8 @@ package com.epam.training.ticketservice.ui.command;
 
 import com.epam.training.ticketservice.core.booking.BookingService;
 import com.epam.training.ticketservice.core.booking.model.BookingDto;
-import com.epam.training.ticketservice.core.booking.persistence.entity.Booking;
+import com.epam.training.ticketservice.core.screening.ScreeningService;
+import com.epam.training.ticketservice.core.screening.persistence.entity.Screening;
 import com.epam.training.ticketservice.core.user.UserService;
 import com.epam.training.ticketservice.core.user.model.UserDto;
 import com.epam.training.ticketservice.core.user.persistence.entity.User;
@@ -18,10 +19,12 @@ public class UserCommand {
 
     private final UserService userService;
     private final BookingService bookingService;
+    private final ScreeningService screeningService;
 
-    public UserCommand(UserService userService, BookingService bookingService) {
+    public UserCommand(UserService userService, BookingService bookingService, ScreeningService screeningService) {
         this.userService = userService;
         this.bookingService = bookingService;
+        this.screeningService = screeningService;
     }
 
     @ShellMethod(key = "sign in", value = "User login")
@@ -58,6 +61,16 @@ public class UserCommand {
             return "You are not signed in";
         }
         return user.get() + " is logged out!";
+    }
+
+    @ShellMethod(key = "show price for", value = "show price for a screening")
+    public String show(String movieName, String roomName, String date, String seats) {
+        Optional<Screening> byId = screeningService.findById(new Screening.Key(movieName, roomName, date));
+        if (byId.isEmpty()) {
+            return "No such screening";
+        }
+        int value = bookingService.getPriceForBooking(byId.get());
+        return "The price for this booking would be " + value + " HUF";
     }
 
 

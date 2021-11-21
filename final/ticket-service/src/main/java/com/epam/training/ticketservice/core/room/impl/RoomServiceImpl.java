@@ -1,5 +1,6 @@
 package com.epam.training.ticketservice.core.room.impl;
 
+import com.epam.training.ticketservice.core.pricing.PricingService;
 import com.epam.training.ticketservice.core.room.RoomService;
 import com.epam.training.ticketservice.core.room.model.RoomDto;
 import com.epam.training.ticketservice.core.room.persistence.entity.Room;
@@ -15,10 +16,11 @@ import java.util.stream.Collectors;
 public class RoomServiceImpl implements RoomService {
 
     private final RoomRepository roomRepository;
+    private PricingService pricingService;
 
-
-    public RoomServiceImpl(RoomRepository roomRepository) {
+    public RoomServiceImpl(RoomRepository roomRepository, PricingService pricingService) {
         this.roomRepository = roomRepository;
+        this.pricingService = pricingService;
     }
 
     @Override
@@ -62,6 +64,26 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public List<RoomDto> getRoomList() {
         return roomRepository.findAll().stream().map(this::convertEntityToDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public String updatePriceComponent(String priceName, String roomName) {
+        Objects.requireNonNull(priceName, "PriceName cannot be null");
+        Objects.requireNonNull(roomName, "RoomName cannot be null");
+
+        if (!pricingService.doesPricingExist(priceName)) {
+            return "Pricing does not exist";
+        }
+
+        Optional<Room> room = roomRepository.findById(roomName);
+        if (room.isPresent()) {
+            Room room1 = room.get();
+            room1.setPriceComponent(priceName);
+            roomRepository.save(room1);
+            return "Successfully updated";
+        }
+        return "Could not update";
+
     }
 
     private RoomDto convertEntityToDto(Room room) {

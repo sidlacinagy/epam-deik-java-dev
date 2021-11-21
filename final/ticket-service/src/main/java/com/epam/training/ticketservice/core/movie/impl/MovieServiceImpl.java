@@ -4,10 +4,10 @@ import com.epam.training.ticketservice.core.movie.MovieService;
 import com.epam.training.ticketservice.core.movie.model.MovieDto;
 import com.epam.training.ticketservice.core.movie.persistence.entity.Movie;
 import com.epam.training.ticketservice.core.movie.persistence.repository.MovieRepository;
-import com.epam.training.ticketservice.core.room.persistence.entity.Room;
+import com.epam.training.ticketservice.core.pricing.PricingService;
 import org.springframework.stereotype.Service;
 
-import java.util.Currency;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -17,14 +17,35 @@ import java.util.stream.Collectors;
 public class MovieServiceImpl implements MovieService {
 
     private final MovieRepository movieRepository;
+    private final PricingService pricingService;
 
-    public MovieServiceImpl(MovieRepository movieRepository) {
+    public MovieServiceImpl(MovieRepository movieRepository, PricingService pricingService) {
         this.movieRepository = movieRepository;
+        this.pricingService = pricingService;
     }
 
     @Override
     public Optional<Movie> getMovieByName(String name) {
         return movieRepository.findById(name);
+    }
+
+    @Override
+    public String updatePriceComponent(String priceName, String movieName) {
+        Objects.requireNonNull(priceName, "PriceName cannot be null");
+        Objects.requireNonNull(movieName, "MovieName cannot be null");
+
+        if (!pricingService.doesPricingExist(priceName)) {
+            return "Pricing does not exist";
+        }
+        Optional<Movie> movie = movieRepository.findById(movieName);
+        if (movie.isPresent()) {
+            Movie movie1 = movie.get();
+            movie1.setPriceComponent(priceName);
+            movieRepository.save(movie1);
+            return "Successfully updated";
+        }
+        return "Could not update";
+
     }
 
     @Override

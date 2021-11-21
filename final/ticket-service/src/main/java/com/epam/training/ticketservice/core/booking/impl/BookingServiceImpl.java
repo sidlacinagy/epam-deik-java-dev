@@ -5,13 +5,11 @@ import com.epam.training.ticketservice.core.booking.model.BookingDto;
 import com.epam.training.ticketservice.core.booking.persistence.entity.Booking;
 import com.epam.training.ticketservice.core.booking.persistence.repository.BookingRepository;
 import com.epam.training.ticketservice.core.movie.MovieService;
-import com.epam.training.ticketservice.core.movie.model.MovieDto;
+import com.epam.training.ticketservice.core.pricing.PricingService;
 import com.epam.training.ticketservice.core.room.RoomService;
 import com.epam.training.ticketservice.core.room.persistence.entity.Room;
 import com.epam.training.ticketservice.core.screening.ScreeningService;
 import com.epam.training.ticketservice.core.screening.persistence.entity.Screening;
-import com.epam.training.ticketservice.core.screening.persistence.repository.ScreeningRepository;
-import com.epam.training.ticketservice.core.user.UserService;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -22,22 +20,37 @@ import java.util.Optional;
 @Service
 public class BookingServiceImpl implements BookingService {
 
+    private int basePrice = 1500;
     private final BookingRepository bookingRepository;
-    private RoomService roomService;
-    private MovieService movieService;
-    private ScreeningService screeningService;
-    private UserService userService;
+    private final RoomService roomService;
+    private final ScreeningService screeningService;
+    private final MovieService movieService;
+    private final PricingService pricingService;
 
 
     public BookingServiceImpl(BookingRepository bookingRepository,
                               RoomService roomService,
-                              MovieService movieService,
-                              ScreeningService screeningService, UserService userService) {
+                              ScreeningService screeningService, MovieService movieService,
+                              PricingService pricingService) {
         this.bookingRepository = bookingRepository;
         this.roomService = roomService;
-        this.movieService = movieService;
         this.screeningService = screeningService;
-        this.userService = userService;
+        this.movieService = movieService;
+        this.pricingService = pricingService;
+    }
+
+    @Override
+    public int getPriceForBooking(Screening screening) {
+        int value = basePrice;
+        String screeningPrice = screening.getPriceComponent();
+        String roomName = screening.getKey().getRoomName();
+        String movieName = screening.getKey().getMovieName();
+        String roomPrice = roomService.getRoomByName(roomName).get().getPriceComponent();
+        String moviePrice = movieService.getMovieByName(movieName).get().getPriceComponent();
+        value = value + pricingService.getValuebyName(screeningPrice)
+                + pricingService.getValuebyName(roomPrice)
+                + pricingService.getValuebyName(moviePrice);
+        return value;
     }
 
 
@@ -54,9 +67,11 @@ public class BookingServiceImpl implements BookingService {
         Optional<Screening> screeningById = screeningService.findById(new Screening.Key(bookingDto.getMovieName(),
                 bookingDto.getRoomName(), bookingDto.getDate()));
 
-        if(screeningById.isEmpty()){
+        if (screeningById.isEmpty()) {
             return "Screening does not exist";
         }
+
+        int value = getPriceForBooking(screeningById.get());
 
         Room roomByName = roomService.getRoomByName(bookingDto.getRoomName()).get();
 
@@ -85,12 +100,12 @@ public class BookingServiceImpl implements BookingService {
                 return "Seat " + "(" + curRow + "," + curCol + ") is already taken";
             }
             seatsAsReturnString.append("(").append(curRow).append(",").append(curCol).append("), ");
-            approvedBookings.add(new Booking(bookingDto.getUser(), 1500,
+            approvedBookings.add(new Booking(bookingDto.getUser(), value,
                     bookingDto.getMovieName(), bookingDto.getRoomName(),
                     bookingDto.getDate(), curRow, curCol));
 
         }
-        String valueAsString = String.valueOf(1500 * seats.length);
+        String valueAsString = String.valueOf(value * seats.length);
         String s = seatsAsReturnString.substring(0, seatsAsReturnString.length() - 2);
         bookingRepository.saveAll(approvedBookings);
 
@@ -112,20 +127,31 @@ public class BookingServiceImpl implements BookingService {
 
             if (byUserAndScreening.size() != 0) {
                 String userScreeningString = "Seats ";
+                int screeningPrice = 0;
                 for (int j = 0; j < byUserAndScreening.size(); j++) {
                     Booking currentBooking = byUserAndScreening.get(j);
                     int row = currentBooking.getKey().getRowNum();
                     int col = currentBooking.getKey().getColNum();
                     userScreeningString = userScreeningString + "(" + row + "," + col + "), ";
+                    screeningPrice = screeningPrice + currentBooking.getPrice();
                 }
                 userScreeningString = userScreeningString.substring(0, userScreeningString.length() - 2);
-                String value = String.valueOf(1500 * byUserAndScreening.size());
+
+
+                String value = String.valueOf(screeningPrice);
+
+
                 returnString = returnString + userScreeningString + " on " + currentScreening.getKey().getMovieName()
                         + " in room " + currentScreening.getKey().getRoomName() + " starting at "
                         + currentScreening.getKey().getDate() + " for " + value + " HUF\n";
             }
         }
         return returnString.substring(0, returnString.length() - 1);
+    }
+
+    @Override
+    public void changePrice(int price) {
+        this.basePrice = price;
     }
 
 

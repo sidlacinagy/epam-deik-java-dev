@@ -17,4 +17,6 @@ public interface MovieService {
     List<MovieDto> getMovieList();
 
     Optional<Movie> getMovieByName(String name);
+
+    String updatePriceComponent(String priceName,String movieName);
 }

@@ -72,6 +72,12 @@ public class MovieCommand {
         return str.substring(0, (str.length() - 1));
     }
 
+    @ShellMethodAvailability("isAvailable")
+    @ShellMethod(key = "attach price component to movie", value = "attach price component to movie")
+    public String attackMovie(String priceName,String movieName) {
+        return movieService.updatePriceComponent(priceName,movieName);
+    }
+
 
     private Availability isAvailable() {
         Optional<UserDto> user = userService.getLoggedInUser();

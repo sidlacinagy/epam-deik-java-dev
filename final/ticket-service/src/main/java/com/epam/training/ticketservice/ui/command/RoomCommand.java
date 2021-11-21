@@ -54,6 +54,12 @@ public class RoomCommand {
         return "Deleted room: " + name;
     }
 
+    @ShellMethodAvailability("isAvailable")
+    @ShellMethod(key = "attach price component to room", value = "attach price component to room")
+    public String attackMovie(String priceName,String roomName) {
+        return roomService.updatePriceComponent(priceName,roomName);
+    }
+
 
     @ShellMethod(key = "list rooms", value = "List rooms")
     public String listMovies() {

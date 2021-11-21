@@ -18,6 +18,7 @@ public class Screening {
 
     @EmbeddedId
     private Key key;
+    private String priceComponent = "";
 
     public Screening(String movieName, String roomName, String date) {
         this.key = new Key(movieName, roomName, date);

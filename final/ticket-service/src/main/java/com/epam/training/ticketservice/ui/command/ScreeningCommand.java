@@ -4,6 +4,7 @@ import com.epam.training.ticketservice.core.movie.MovieService;
 import com.epam.training.ticketservice.core.movie.persistence.entity.Movie;
 import com.epam.training.ticketservice.core.screening.ScreeningService;
 import com.epam.training.ticketservice.core.screening.model.ScreeningDto;
+import com.epam.training.ticketservice.core.screening.persistence.entity.Screening;
 import com.epam.training.ticketservice.core.user.UserService;
 import com.epam.training.ticketservice.core.user.model.UserDto;
 import com.epam.training.ticketservice.core.user.persistence.entity.User;
@@ -56,6 +57,12 @@ public class ScreeningCommand {
         return "Successfully deleted screening";
     }
 
+    @ShellMethodAvailability("isAvailable")
+    @ShellMethod(key = "attach price component to screening", value = "attach price component to screening")
+    public String attackMovie(String priceName, String movieName, String roomName, String date) {
+        Screening.Key key = new Screening.Key(movieName, roomName, date);
+        return screeningService.updatePriceComponent(priceName, key);
+    }
 
     @ShellMethod(key = "list screenings", value = "List screening")
     public String listScreening() {
