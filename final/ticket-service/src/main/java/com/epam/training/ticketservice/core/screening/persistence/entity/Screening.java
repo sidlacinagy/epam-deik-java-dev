@@ -24,6 +24,11 @@ public class Screening {
         this.key = new Key(movieName, roomName, date);
     }
 
+    public Screening(String movieName, String roomName, String date, String priceComponent) {
+        this.key = new Key(movieName, roomName, date);
+        this.priceComponent = priceComponent;
+    }
+
 
     @Data
     @NoArgsConstructor

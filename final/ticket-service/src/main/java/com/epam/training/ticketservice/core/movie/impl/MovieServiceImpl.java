@@ -31,8 +31,6 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public String updatePriceComponent(String priceName, String movieName) {
-        Objects.requireNonNull(priceName, "PriceName cannot be null");
-        Objects.requireNonNull(movieName, "MovieName cannot be null");
 
         if (!pricingService.doesPricingExist(priceName)) {
             return "Pricing does not exist";
@@ -50,20 +48,12 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public void createMovie(MovieDto movieDto) {
-        Objects.requireNonNull(movieDto, "Movie cannot be null");
-        Objects.requireNonNull(movieDto.getGenre(), "Genre cannot be null");
-        Objects.requireNonNull(movieDto.getName(), "Name cannot be null");
-        Objects.requireNonNull(movieDto.getLength(), "Length cannot be null");
         Movie movie = new Movie(movieDto.getName(), movieDto.getGenre(), movieDto.getLength());
         movieRepository.save(movie);
     }
 
     @Override
     public String updateMovie(MovieDto movieDto) {
-        Objects.requireNonNull(movieDto, "Movie cannot be null");
-        Objects.requireNonNull(movieDto.getGenre(), "Genre cannot be null");
-        Objects.requireNonNull(movieDto.getName(), "Name cannot be null");
-        Objects.requireNonNull(movieDto.getLength(), "Length cannot be null");
         Optional<Movie> movie = movieRepository.findById(movieDto.getName());
 
         if (movie.isPresent()) {

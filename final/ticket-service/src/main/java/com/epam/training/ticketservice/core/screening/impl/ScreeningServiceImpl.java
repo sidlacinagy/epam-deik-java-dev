@@ -39,8 +39,6 @@ public class ScreeningServiceImpl implements ScreeningService {
     @Override
     public String updatePriceComponent(String priceName, Screening.Key key) {
 
-        Objects.requireNonNull(priceName, "PriceName cannot be null");
-        Objects.requireNonNull(key, "Key cannot be null");
         Optional<Screening> screening = screeningRepository.findById(key);
 
         if (!pricingService.doesPricingExist(priceName)) {
@@ -61,10 +59,6 @@ public class ScreeningServiceImpl implements ScreeningService {
     @Override
     public String createScreening(ScreeningDto screeningDto) {
 
-        Objects.requireNonNull(screeningDto, "Screening cannot be null");
-        Objects.requireNonNull(screeningDto.getDate(), "Date cannot be null");
-        Objects.requireNonNull(screeningDto.getMovieName(), "Movie name cannot be null");
-        Objects.requireNonNull(screeningDto.getRoomName(), "Room name cannot be null");
 
         Optional<Room> room = roomService.getRoomByName(screeningDto.getRoomName());
 
@@ -90,7 +84,6 @@ public class ScreeningServiceImpl implements ScreeningService {
         if (isOverLappingWithTimeInterval(byRoom, startDate, endDate, 10)) {
             return "This would start in the break period after another screening in this room";
         }
-
 
         Screening screening = new Screening(screeningDto.getMovieName(),
                 screeningDto.getRoomName(),
