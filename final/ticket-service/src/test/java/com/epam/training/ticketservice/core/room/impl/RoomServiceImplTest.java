@@ -1,10 +1,6 @@
 package com.epam.training.ticketservice.core.room.impl;
 
-import com.epam.training.ticketservice.core.movie.MovieService;
-import com.epam.training.ticketservice.core.movie.impl.MovieServiceImpl;
-import com.epam.training.ticketservice.core.movie.model.MovieDto;
-import com.epam.training.ticketservice.core.movie.persistence.entity.Movie;
-import com.epam.training.ticketservice.core.movie.persistence.repository.MovieRepository;
+
 import com.epam.training.ticketservice.core.pricing.impl.PricingServiceImpl;
 import com.epam.training.ticketservice.core.room.RoomService;
 import com.epam.training.ticketservice.core.room.model.RoomDto;
@@ -16,7 +12,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -50,11 +45,6 @@ public class RoomServiceImplTest {
     }
 
 
-    @Test
-    public void testUpdateRoomShouldThrowNullPointerExceptionWhenRoomDtoIsNull() {
-        // Given - When - Then
-        assertThrows(NullPointerException.class, () -> underTest.updateRoom(null));
-    }
 
     @Test
     public void testUpdateRoomShouldReturnSuccessfulWhenRoomDtoExistsAndRoomExists() {

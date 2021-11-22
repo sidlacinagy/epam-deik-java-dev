@@ -1,6 +1,7 @@
 package com.epam.training.ticketservice.core.booking.persistence.entity;
 
-import com.epam.training.ticketservice.core.screening.persistence.entity.Screening;
+
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,8 +11,8 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import java.awt.print.Book;
 import java.io.Serializable;
+import java.util.Objects;
 
 @Entity
 @Data
@@ -30,6 +31,7 @@ public class Booking {
         this.price = price;
         this.key = new Key(movieName, roomName, date, rowNum, colNum);
     }
+
 
     @Data
     @NoArgsConstructor

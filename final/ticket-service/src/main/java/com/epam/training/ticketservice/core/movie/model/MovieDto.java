@@ -1,9 +1,11 @@
 package com.epam.training.ticketservice.core.movie.model;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 public class MovieDto {
 
     private final String name;

@@ -18,17 +18,6 @@ class UserServiceImplTest {
     private final UserRepository userRepository = mock(UserRepository.class);
     private UserService underTest = new UserServiceImpl(userRepository);
 
-    @Test
-    public void testLoginShouldThrowNullPointerExceptionWhenUsernameIsNull() {
-        // Given - When - Then
-        assertThrows(NullPointerException.class, () -> underTest.login(null, "pass"));
-    }
-
-    @Test
-    public void testLoginShouldThrowNullPointerExceptionWhenPasswordIsNull() {
-        // Given - When - Then
-        assertThrows(NullPointerException.class, () -> underTest.login("user", null));
-    }
 
     @Test
     public void testLoginShouldSetLoggedInUserWhenUsernameAndPasswordAreCorrect() {

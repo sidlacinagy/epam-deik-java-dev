@@ -30,20 +30,12 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public void createRoom(RoomDto roomDto) {
-        Objects.requireNonNull(roomDto, "Room cannot be null");
-        Objects.requireNonNull(roomDto.getRows(), "Row cannot be null");
-        Objects.requireNonNull(roomDto.getColumns(), "Col cannot be null");
-        Objects.requireNonNull(roomDto.getName(), "Name cannot be null");
         Room room = new Room(roomDto.getName(), roomDto.getRows(), roomDto.getColumns());
         roomRepository.save(room);
     }
 
     @Override
     public String updateRoom(RoomDto roomDto) {
-        Objects.requireNonNull(roomDto, "Room cannot be null");
-        Objects.requireNonNull(roomDto.getRows(), "Row cannot be null");
-        Objects.requireNonNull(roomDto.getColumns(), "Col cannot be null");
-        Objects.requireNonNull(roomDto.getName(), "Name cannot be null");
         Optional<Room> room = roomRepository.findById(roomDto.getName());
 
         if (room.isPresent()) {
@@ -68,9 +60,6 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public String updatePriceComponent(String priceName, String roomName) {
-        Objects.requireNonNull(priceName, "PriceName cannot be null");
-        Objects.requireNonNull(roomName, "RoomName cannot be null");
-
         if (!pricingService.doesPricingExist(priceName)) {
             return "Pricing does not exist";
         }

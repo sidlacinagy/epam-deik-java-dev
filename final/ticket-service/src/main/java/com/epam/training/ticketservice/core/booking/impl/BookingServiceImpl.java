@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -56,12 +55,6 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public String createBooking(BookingDto bookingDto) {
-        Objects.requireNonNull(bookingDto, "Booking cannot be null");
-        Objects.requireNonNull(bookingDto.getSeats(), "Seats cannot be null");
-        Objects.requireNonNull(bookingDto.getDate(), "Date cannot be null");
-        Objects.requireNonNull(bookingDto.getMovieName(), "Movie name cannot be null");
-        Objects.requireNonNull(bookingDto.getRoomName(), "Room name cannot be null");
-        Objects.requireNonNull(bookingDto.getUser(), "User cannot be null");
         Optional<Screening> screeningById = screeningService.findById(new Screening.Key(bookingDto.getMovieName(),
                 bookingDto.getRoomName(), bookingDto.getDate()));
 

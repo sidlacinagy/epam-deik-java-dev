@@ -1,6 +1,5 @@
 package com.epam.training.ticketservice.core.screening.model;
 
-import com.epam.training.ticketservice.core.room.model.RoomDto;
 import lombok.Data;
 
 @Data

@@ -1,10 +1,11 @@
 package com.epam.training.ticketservice.core.booking.model;
 
-import com.epam.training.ticketservice.core.screening.model.ScreeningDto;
-import lombok.Builder;
-import lombok.Data;
+
+import lombok.*;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class BookingDto {
 
