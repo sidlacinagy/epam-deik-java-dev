@@ -49,20 +49,20 @@ public class RoomCommand {
 
     @ShellMethodAvailability("isAvailable")
     @ShellMethod(key = "delete room", value = "Delete room")
-    public String deleteMovie(String name) {
+    public String deleteRoom(String name) {
         roomService.deleteRoom(name);
         return "Deleted room: " + name;
     }
 
     @ShellMethodAvailability("isAvailable")
     @ShellMethod(key = "attach price component to room", value = "attach price component to room")
-    public String attackMovie(String priceName,String roomName) {
+    public String attachRoom(String priceName,String roomName) {
         return roomService.updatePriceComponent(priceName,roomName);
     }
 
 
     @ShellMethod(key = "list rooms", value = "List rooms")
-    public String listMovies() {
+    public String listRooms() {
         List<RoomDto> roomList = roomService.getRoomList();
         if (roomList.size() == 0) {
             return "There are no rooms at the moment";

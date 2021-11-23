@@ -60,7 +60,7 @@ public class UserCommand {
         if (user.isEmpty()) {
             return "You are not signed in";
         }
-        return user.get() + " is logged out!";
+        return user.get().getUsername() + " is logged out!";
     }
 
     @ShellMethod(key = "show price for", value = "show price for a screening")
@@ -69,8 +69,9 @@ public class UserCommand {
         if (byId.isEmpty()) {
             return "No such screening";
         }
+        String[] seatsSplit = seats.split(" ");
         int value = bookingService.getPriceForBooking(byId.get());
-        return "The price for this booking would be " + value + " HUF";
+        return "The price for this booking would be " + value * seatsSplit.length + " HUF";
     }
 
 
