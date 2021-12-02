@@ -72,11 +72,6 @@ public class ScreeningCommand {
         }
         StringBuilder str = new StringBuilder();
 
-        Collator coll = Collator.getInstance(new Locale("hu", "HU"));
-
-        screeningList = screeningList.stream()
-                .sorted(Comparator.comparing(ScreeningDto::getMovieName, coll))
-                .collect(Collectors.toList());
 
         for (int i = 0; i < screeningList.size(); i++) {
             ScreeningDto currentScreening = screeningList.get(i);
